@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "checkJs": false,
+        "strict": true,
+        "baseUrl": "./",
+        "moduleResolution": "node",
+        "paths": {
+            "@/*": ["./src/*"],
+            "@components/*": ["./src/components/*"],
+            "@views/*": ["./src/views/*"]
+        }
+    },
+    "exclude": ["node_modules", "dist", "temp"],
+    "include": ["src/**/*", "types/**/*"],
+    "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
+}

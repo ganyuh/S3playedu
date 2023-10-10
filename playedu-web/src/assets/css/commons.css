@@ -1,0 +1,40 @@
+body{
+    width: 100%;
+    font-size: 14px;
+    height: 100vh;
+}
+
+/**修改全局的滚动条*/
+/**滚动条的宽度*/
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-thumb {
+    background-color: #a8a8a8;
+    border-radius: 3px;
+}
+/*表格*/
+.el-table__body-wrapper::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+.el-table__body-wrapper::-webkit-scrollbar-thumb {
+    background-color: #a8a8a8;
+    border-radius: 3px;
+}
+
+.my-pointer{
+    cursor: pointer;
+}
+
+/**
+ * 修改 ElementPlus 的默认 css
+ */
+/*:root{*/
+/*    --el-color-primary-light-3: #fe6d6d;*/
+/*    --el-color-primary-light-5: #cf6d6d;*/
+/*    --el-color-primary-light-7: #e26d6d;*/
+/*    --el-color-primary-light-8: #ec6d6d;*/
+/*    --el-color-primary-light-9: #f56d6d;*/
+/*    --el-color-primary-dark-2: #cc3333;*/
+/*}*/

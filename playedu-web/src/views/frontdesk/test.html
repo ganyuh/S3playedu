@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+</head>
+<body>
+<input type="text" id="ipt" value="" />
+<div id="result"></div>
+
+<script>
+  // function ts(gen) {
+  //   if (typeof gen === 'function') gen = gen();
+  //   if (!gen || typeof gen.next !== 'function') return;
+  //   return function next() {
+  //     const start = performance.now();
+  //     let res = null;
+  //     do {
+  //       res = gen.next();
+  //     } while (!res.done && performance.now() - start < 25);
+  //     if (res.done) return;
+  //     setTimeout(next);
+  //   };
+  // }
+  // ts(function* (){
+  //   const start = performance.now();
+  //   let count = 0;
+  //   while (performance.now() - start < 10) {
+  //     yield;
+  //   }
+  //   console.log('done!');
+  // })()
+
+  const ipt = document.querySelector('#ipt');
+  const worker = new Worker('./worker.js');
+
+  ipt.oninput = function() {
+    // 通过postMessage发送消息
+    worker.postMessage({ number: this.value });
+  };
+
+  // 通过onmessage接收消息
+  worker.onmessage = function(e) {
+    document.querySelector('#result').innerHTML = e.data;
+  };
+</script>
+
+</body>
+</html>

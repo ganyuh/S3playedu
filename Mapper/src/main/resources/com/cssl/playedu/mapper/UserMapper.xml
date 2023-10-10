@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cssl.playedu.mapper.UserMapper">
+
+    <resultMap id="userMap" type="com.cssl.playedu.domain.User">
+        <id property="id" column="uid"></id>
+        <result property="email" column="uemail"></result>
+        <result property="name" column="uname"></result>
+        <result property="avatar" column="uavatar"></result>
+        <result property="password" column="upassword"></result>
+        <result property="idCard" column="uidcard"></result>
+        <result property="createdAt" column="ucreatedAt"></result>
+        <collection property="userDepartment" ofType="com.cssl.playedu.domain.UserDepartment" javaType="java.util.List">
+            <id property="userId" column="uduserId"></id>
+            <result property="depId" column="uddepId"></result>
+            <collection property="department" ofType="com.cssl.playedu.domain.Department" javaType="java.util.List">
+                <id property="id" column="did"></id>
+                <result property="name" column="dname"></result>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="getUsers" resultMap="userMap">
+        select u.id as uid
+        ,u.email as uemail
+        ,u.name as uname
+        ,u.avatar as uavatar
+        ,u.password as upassword
+        ,u.id_card as uidcard
+        ,u.created_at as ucreatedAt
+        ,ud.user_id as uduserId
+        ,ud.dep_id as uddepId
+        ,d.id as did
+        ,d.name as dname
+        from users AS u
+        INNER JOIN user_department AS ud ON ud.user_id=u.id
+        INNER JOIN department AS d ON d.id=ud.dep_id
+        <where>
+            <if test="name != null and name != ''">
+                AND u.name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="email != null and email != ''">
+                AND u.email LIKE CONCAT('%', #{email}, '%')
+            </if>
+            <if test="did != null and did != '' and did != 0 and did != 'undefined'">
+                AND d.id = #{did}
+            </if>
+        </where>
+    </select>
+
+    <insert id="addUser">
+        INSERT INTO
+        users(email,name,avatar,password,salt,id_card,credit1,create_ip,create_city,is_active,is_lock,is_verify,verify_at,is_set_password,login_at,created_at)
+        VALUES (#{email},#{name},#{avatar},#{password},#{salt},#{id_card},0,'127.0.0.1','内网',1,0,0,DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'),0,DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'),DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))
+    </insert>
+
+    <select id="showAllUD" resultType="int">
+        select id from users
+        where email=#{email} and name=#{name}
+    </select>
+
+    <insert id="addUserDepartment">
+        INSERT INTO `user_department`(user_id,dep_id)
+        VALUES (#{res}, #{dep_id});
+    </insert>
+
+    <select id="showAll" resultMap="userMap">
+        select u.id as uid
+        ,u.email as uemail
+        ,u.name as uname
+        ,u.avatar as uavatar
+        ,u.password as upassword
+        ,u.id_card as uidcard
+        ,u.created_at as ucreatedAt
+        ,ud.user_id as uduserId
+        ,ud.dep_id as uddepId
+        ,d.id as did
+        ,d.name as dname
+        from users AS u
+        INNER JOIN user_department AS ud ON ud.user_id=u.id
+        INNER JOIN department AS d ON d.id=ud.dep_id
+        where u.id=#{id}
+    </select>
+
+    <update id="updateUser">
+        UPDATE users
+        SET name=#{name},email=#{email},avatar=#{avatar},password=#{password},salt=#{salt},id_card=#{id_card}
+        where id=#{id}
+    </update>
+
+    <update id="updateUserDepartment">
+        UPDATE user_department
+        SET dep_id=#{dep_id}
+        where user_id=#{res}
+    </update>
+
+    <delete id="deleteUser">
+        delete from users where id=#{id}
+    </delete>
+
+    <delete id="deleteUserDepartment">
+        delete from user_department where user_id=#{id}
+    </delete>
+</mapper>

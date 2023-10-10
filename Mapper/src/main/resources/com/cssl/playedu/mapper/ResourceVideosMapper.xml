@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cssl.playedu.mapper.ResourceVideosMapper">
+    <resultMap id="ResourceVideosMap" type="ResourceVideos">
+      <id property="rid" column="rid"/>
+    </resultMap>
+
+  <insert id="insertResourceVideos">
+    insert into resource_videos(rid, poster, duration, created_at)
+    values ( #{rid}, #{poster}, #{duration}, now());
+  </insert>
+</mapper>

@@ -1,0 +1,62 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/my_playedu_db
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+  servlet:
+    multipart:
+      # 设置传输大小
+      max-file-size: 2048MB
+      max-request-size: 2048MB
+  main:
+    allow-circular-references: true
+  redis:
+    host: 127.0.0.1
+    port: 6380
+    password: 123456
+# 安全配置
+shiro:
+  enabled: true
+  web:
+    enabled: true
+  #  loginUrl: /manage/admin/unauthenticated
+  #  unauthorizedUrl:  /manage/admin/unauthenticated
+  sessionManager:
+    sessionIdCookieEnabled: true
+    sessionIdUrlRewritingEnabled: false
+my-shiro-config:
+  # 加密算法
+  hash-algorithm: "SHA-256"
+  # 加密次数
+  hash-iterations: "1024"
+# token配置
+token:
+  # 令牌自定义标识
+  header: Authorization
+  # token 前缀
+  prefix: Bearer
+  # 令牌密钥
+  secret-key: abcdefghijklmnopqrstuvwxyz
+  # 令牌有效期（默认 7 天）
+  expireTime: 604800000
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    auto-mapping-behavior: full
+    cache-enabled: false
+    local-cache-scope: statement
+  type-aliases-package: com.cssl.playedu.domain
+minio:
+  endpoint: http://127.0.0.1:9001
+  bucketName: playedu
+  accessKey: playedu
+  secretKey: T@playedu
+
+
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  offsetAsPageNum: true

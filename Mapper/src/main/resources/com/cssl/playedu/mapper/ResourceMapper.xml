@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cssl.playedu.mapper.ResourceMapper">
+    <resultMap id="resourceMap" type="Resources">
+      <id property="id" column="id"/>
+
+    </resultMap>
+
+  <insert id="insertResource" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+    insert into resources(admin_id, type, name, extension, size, disk, file_id, path, url, created_at, parent_id, is_hidden)
+    values(#{adminId}, #{type}, #{name}, #{extension}, #{size}, #{disk}, #{fileId}, #{path}, #{url}, now(), #{parentId}, 0)
+  </insert>
+</mapper>

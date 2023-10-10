@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cssl.playedu.mapper.CourseMapper">
+
+    <!-- 查询功能五表联查(course 课程表,department 部门表,resource_categories 资源类别表,resource_course_categories 课程资源类别表,course_department 课程部门表)-->
+    <resultMap id="CourseMap" type="Course">
+        <id property="id" column="cid"></id>
+        <result property="title" column="ctitle"></result>
+        <result property="thumb" column="cthumb"></result>
+        <result property="charge" column="ccharge"></result>
+        <result property="shortDesc" column="cshortDesc"></result>
+        <result property="classHour" column="cclassHour"></result>
+        <result property="show" column="cshow"></result>
+        <result property="required" column="crequired"></result>
+        <result property="createdAt" column="ccreatedAt"></result>
+        <result property="updatedAt" column="cupdatedAt"></result>
+        <result property="deletedAt" column="cdeletedAt"></result>
+        <collection property="courseDepartments" ofType="CourseDepartment" javaType="java.util.List">
+            <id property="courseId" column="cdcourseId"></id>
+            <result property="depId" column="cddepId"></result>
+            <collection property="departments" ofType="Department" javaType="java.util.List">
+                <id property="id" column="did"></id>
+                <result property="name" column="dname"></result>
+                <result property="parentId" column="dparentId"></result>
+                <result property="parentChain" column="dparentChain"></result>
+                <result property="sort" column="dsort"></result>
+                <result property="createdAt" column="dcreatedAt"></result>
+                <result property="updatedAt" column="dupdatedAt"></result>
+            </collection>
+        </collection>
+        <collection property="resourceCourseCategories" ofType="ResourceCourseCategories" javaType="java.util.List">
+            <id property="courseId" column="rcccourseId"></id>
+            <result property="categoryId" column="rcccategoryId"></result>
+            <collection property="resourceCategories" ofType="ResourceCategories" javaType="java.util.List">
+                <id property="id" column="rcid"></id>
+                <result property="parentId" column="rcparentId"></result>
+                <result property="parentChain" column="rcparentChain"></result>
+                <result property="name" column="rcname"></result>
+                <result property="sort" column="rcsort"></result>
+                <result property="createdAt" column="rccreatedAt"></result>
+                <result property="updatedAt" column="rcupdatedAt"></result>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="showAllCourse" resultMap="CourseMap">
+        SELECT cou.id as cid,
+        cou.title as ctitle,
+        cou.thumb as cthumb,
+        cou.charge as ccharge,
+        cou.short_desc as cshortDesc,
+        cou.class_hour as cclassHour,
+        cou.is_show as cshow,
+        cou.is_required as crequired,
+        cou.created_at as ccreatedAt,
+        cou.updated_at as cupdatedAt,
+        cou.deleted_at as cdeletedAt,
+        cd.course_id as cdcourseId,
+        cd.dep_id as cddepId,
+        rcc.course_id as rcccourseId,
+        rcc.category_id as rcccategoryId,
+        d.id as did,
+        d.name as dname,
+        d.parent_id as dparentId,
+        d.parent_chain as dparentChain,
+        d.sort as dsort,
+        d.created_at as dcreatedAt,
+        d.updated_at as dupdatedAt,
+        rc.id as rcid,
+        rc.parent_id as rcparentId,
+        rc.parent_chain as rcparentChain,
+        rc.name as rcname,
+        rc.sort as rcsort,
+        rc.created_at as rccreatedAt,
+        rc.updated_at as rcupdatedAt FROM courses cou
+        INNER JOIN course_department cd ON cd.course_id=cou.id
+        INNER JOIN department d ON d.id=cd.dep_id
+        INNER JOIN resource_course_categories rcc ON rcc.course_id=cou.id
+        INNER JOIN resource_categories rc ON rc.id=rcc.category_id
+        <where>
+            <if test="title != null and title != ''">
+                and cou.title LIKE "%"#{title}"%"
+            </if>
+            <if test="did != null and did != '' and did != 0">
+                and d.id = #{did}
+            </if>
+            <if test="rcid != null and rcid != '' and rcid != 0">
+                and rc.id = #{rcid}
+            </if>
+        </where>
+    </select>
+    <!-- 查询功能-->
+
+
+
+
+
+    <!-- 删除功能:根据id删除三张表格-->
+    <sql id="delete_course">
+        DELIMITER
+        CREATE PROCEDURE delete_course(IN scid INT)
+        BEGIN
+        <!-- 删除courses表 -->
+        DELETE FROM courses WHERE id = scid;
+        <!-- 删除course_department表 -->
+        DELETE FROMqqq course_department WHERE course_id = scid;
+        <!-- 删除resource_course_categories表 -->
+        DELETE FROM resource_course_categories WHERE course_id = scid;
+        END
+        DELIMITER;
+    </sql>
+
+    <delete id="deleteCourse" statementType="CALLABLE" parameterType="int">
+        CALL delete_course(#{id});
+    </delete>
+    <!--删除功能-->
+
+
+
+
+
+    <!--新增功能-->
+    <insert id="insertCourse" statementType="CALLABLE" parameterType="int">
+        INSERT INTO courses(title, thumb, charge, short_desc, class_hour, is_show, is_required, created_at)
+        VALUES( #{title}, #{thumb}, #{charge}, #{shortDesc}, #{classHour}, #{isShow}, #{isRequired}, #{createdAt});
+    </insert>
+
+    <insert id="batchInsertCourseDepartments" parameterType="java.util.List">
+        INSERT INTO course_department (course_id, dep_id)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.courseId}, #{item.depId})
+        </foreach>
+    </insert>
+
+    <insert id="batchInsertResourceCategories" parameterType="java.util.List">
+        INSERT INTO resource_course_categories (course_id, category_id)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.courseId}, #{item.categoryId})
+        </foreach>
+    </insert>
+    <!--新增功能-->
+</mapper>

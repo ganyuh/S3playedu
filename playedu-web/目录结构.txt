@@ -1,0 +1,17 @@
+
+├─public
+└─src
+    ├─assets
+    │  └─css
+    ├─components
+    ├─config
+    ├─hooks
+    ├─router
+    ├─service
+    ├─stores
+    │  └─modules
+    ├─utils
+    └─views
+        ├─backstage
+        │  └─login
+        └─frontdesk

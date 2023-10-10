@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cssl.playedu.mapper.AdminLogsMapper">
+    <select id="showAllAdminLogs" resultType="com.cssl.playedu.domain.AdminLogs">
+        select * from admin_logs
+    </select>
+    <select id="getMessageById" resultType="com.cssl.playedu.domain.AdminLogs">
+        select * from admin_logs
+    </select>
+    <sql id="pojo">
+        a.id,a.admin_id,a.admin_name as adminName ,a.module,a.title,a.opt,a.method,a.request_method,a.url,a.param,a.result,a.ip,a.ip_area,
+        a.error_msg,a.created_at
+    </sql>
+    <select id="selectUserByName" resultType="com.cssl.playedu.domain.AdminLogs">
+        select <include refid="pojo"/> from admin_logs a
+        <where>
+            <if test="adminName != null and adminName != ''">
+                and admin_name like concat('%',#{adminName},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="showDetails" parameterType="com.cssl.playedu.domain.AdminLogs">
+        select param,result from admin_logs where id = '%',#{id},'%'
+
+    </select>
+</mapper>

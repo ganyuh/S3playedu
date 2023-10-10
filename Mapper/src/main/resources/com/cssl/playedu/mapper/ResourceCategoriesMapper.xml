@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cssl.playedu.mapper.ResourceCategoriesMapper">
+    <resultMap id="ResourceMap" type="com.cssl.playedu.vo.ResourceCategoriesMap">
+        <id property="rc1id" column="rc1id"/>
+        <result property="rc1name" column="rc1name"/>
+        <result property="rc1parentId" column="rc1parentId"/>
+        <collection property="rcs" ofType="com.cssl.playedu.vo.ResourceCategoriesMap" javaType="java.util.List">
+            <id property="rc1id" column="rc2id"/>
+            <result property="rc1name" column="rc2name"/>
+            <result property="rc1parentId" column="rc2parentId"/>
+            <collection property="rcs" ofType="com.cssl.playedu.vo.ResourceCategoriesMap" javaType="java.util.List">
+                <id property="rc1id" column="rc3id"/>
+                <result property="rc1name" column="rc3name"/>
+                <result property="rc1parentId" column="rc3parentId"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="showAllResourceCategories" resultMap="ResourceMap">
+        select rc1.id as rc1id
+        ,rc1.`name` as  rc1name
+        ,rc1.parent_id as rc1parentId
+        ,rc2.id as rc2id
+        ,rc2.`name` as rc2name
+        ,rc2.parent_id as rc2parentId
+        ,rc3.id as rc3id
+        ,rc3.`name` as rc3name
+        ,rc3.parent_id as rc3parentId
+        from resource_categories rc1
+        LEFT JOIN resource_categories rc2 ON rc2.parent_id=rc1.id
+        LEFT JOIN resource_categories rc3 ON rc3.parent_id=rc2.id
+        WHERE rc1.parent_id=0
+    </select>
+
+    <insert id="addResourceCategories">
+        INSERT INTO `resource_categories`(parent_id,name,sort,created_at)
+        VALUES (#{parentId},#{name}, 1,DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'));
+    </insert>
+
+    <update id="updateResourceCategories">
+        UPDATE `resource_categories`
+        SET `name`=#{name},parent_id=#{parentId},`updated_at`=DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')
+        WHERE `id`=#{id};
+    </update>
+
+    <delete id="deleteResourceCategories">
+        DELETE FROM `resource_categories`
+        WHERE `id`=#{id};
+    </delete>
+
+    <select id="getCourseCountByCategoryId" resultType="int">
+        SELECT COUNT(*)
+        FROM courses cou
+        INNER JOIN course_department cd ON cd.course_id=cou.id
+        INNER JOIN department d ON d.id=cd.dep_id
+        INNER JOIN resource_course_categories rcc ON rcc.course_id=cou.id
+        INNER JOIN resource_categories rc ON rc.id=rcc.category_id
+        WHERE rc.id=#{id};
+    </select>
+</mapper>
